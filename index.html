@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dave Ai Metal Buildings™</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏗️</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    
+    :root {
+      --red: #c8102e;
+    }
+    
+    body {
+      font-family: 'Inter', system_ui, sans-serif;
+      background: linear-gradient(rgba(10,10,10,0.88), rgba(10,10,10,0.92)), url('https://picsum.photos/id/1018/1920/1080') center/cover no-repeat fixed;
+      /* For the original metal building picture look:
+         - Replace the picsum URL with your own photo of a steel frame / red iron building / warehouse.
+         - Or add a local image: background-image: url('your-metal-building.jpg'); */
+
+    }
+    
+    .font-display {
+      font-family: 'Space Grotesk', 'Inter', system_ui, sans-serif;
+      font-weight: 600;
+    }
+
+    .tech-panel {
+      background: #0a0a0a;
+      border: 1px solid #27272a;
+    }
+
+    .matrix-text {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .chat-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #3f3f46 #18181b;
+    }
+
+    .aimb-bubble {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      line-height: 1.4;
+    }
+
+    .aimb-bubble.user {
+      background: #c8102e;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .aimb-bubble.ai {
+      background: #18181b;
+      border: 1px solid #3f3f46;
+      color: #e4e4e7;
+      border-bottom-left-radius: 4px;
+    }
+
+    .status-dot {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .dave-scanner {
+      animation: scan 2.5s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { transform: translateY(-100%); }
+      50% { transform: translateY(300%); }
+      100% { transform: translateY(-100%); }
+    }
+
+    .section-title {
+      letter-spacing: 0.5px;
+    }
+
+    .nav-link {
+      transition: color 0.1s ease;
+    }
+    .nav-link:hover {
+      color: #c8102e;
+    }
+
+    .metal-gradient {
+      background: linear-gradient(90deg, #c8102e 0%, #f43f5e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Original-inspired lead gate styles */
+    .aimb-lead-card {
+      background: #0a0a0a;
+      border: 1px solid rgba(212, 23, 31, 0.34);
+      border-radius: 18px;
+      padding: 24px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .aimb-lead-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .aimb-lead-input {
+      width: 100%;
+      background: #111;
+      border: 1px solid #27272a;
+      color: #e4e4e7;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .aimb-lead-input:focus {
+      border-color: #c8102e;
+      outline: none;
+      background: #1a1a1a;
+    }
+
+    /* Scrolling thinking terminal on the side - like original "thinking/working" */
+    .thinking-terminal {
+      margin-top: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.55);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10.5px;
+      line-height: 1.3;
+      height: 98px;
+      overflow: hidden;
+      color: #a1a1aa;
+      position: relative;
+    }
+    .thinking-terminal .line {
+      display: block;
+      opacity: 0.9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: opacity 0.2s;
+    }
+    .thinking-terminal .cursor {
+      display: inline-block;
+      width: 5px;
+      height: 12px;
+      background: #c8102e;
+      vertical-align: middle;
+      margin-left: 1px;
+      animation: blink 0.9s step-end infinite;
+    }
+
+    .typing-cursor {
+      animation: blink 0.6s step-end infinite;
+      color: #c8102e;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    .aimb-lead-btn {
+      background: #c8102e;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+      box-shadow: 0 4px 14px rgba(200,16,46,0.3);
+    }
+    .aimb-lead-btn:hover {
+      background: #a00d25;
+      transform: translateY(-1px);
+    }
+    .aimb-lead-title {
+      font-size: clamp(22px, 3.5vw, 32px);
+      line-height: 1.05;
+      letter-spacing: -1.2px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff, #ff7777);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .aimb-lead-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(212,23,31,.35);
+      background: rgba(212,23,31,.12);
+      color: #ff5555;
+      font-size: 11px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .aimb-lead-copy {
+      color: rgba(255,255,255,.72);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200">
+  <!-- Header -->
+  <header class="border-b border-zinc-800 bg-zinc-950/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-x-3">
+          <img src="dave-ai-logo.jpg" alt="Dave Ai Metal Buildings" class="h-16 w-auto" onerror="this.style.display='none'">
+        </div>
+
+        <nav class="hidden md:flex items-center gap-x-8 text-sm">
+          <a href="#intelligence" class="nav-link text-zinc-400 hover:text-white">Intelligence Center</a>
+          <a href="#chat" class="nav-link text-zinc-400 hover:text-white">Dave Ai</a>
+          <a href="#how" class="nav-link text-zinc-400 hover:text-white">How It Works</a>
+          <a href="#" onclick="showContact()" class="nav-link text-zinc-400 hover:text-white">Contact</a>
+        </nav>
+
+        <div class="flex items-center gap-x-3">
+          <div class="hidden sm:flex items-center gap-x-2 px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs">
+            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            <span class="text-emerald-400 font-medium">DAVE AI ONLINE</span>
+          </div>
+          <button onclick="reset()" 
+                  class="text-xs px-3 py-1.5 rounded-lg border border-zinc-700 hover:bg-zinc-900 transition-colors">
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero / Brand -->
+  <div class="max-w-5xl mx-auto px-6 pt-12 pb-8 text-center">
+    <div class="inline-flex items-center gap-x-2 px-4 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs tracking-[1.5px] mb-4">
+      <span>DAVE AI v1.0</span>
+    </div>
+    
+    <h1 class="text-6xl md:text-7xl font-display tracking-tighter font-semibold leading-none">
+      The AI-Powered<br>
+      <span class="metal-gradient">Future of Metal Buildings</span>
+    </h1>
+    
+    <p class="mt-4 max-w-md mx-auto text-xl text-zinc-400">
+      Talk to Dave Ai — your intelligent guide for red iron, cold-formed steel, loads, foundations, and project planning.
+    </p>
+  </div>
+
+  <!-- Main Dave Ai Interface -->
+  <div id="chat" class="max-w-7xl mx-auto px-6 pb-16">
+    <div class="grid lg:grid-cols-12 gap-6">
+      
+      <!-- Chat Column -->
+      <div class="lg:col-span-8">
+        <div class="tech-panel rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl">
+          
+          <!-- Chat Header -->
+          <div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/60">
+            <div class="flex items-center gap-x-3">
+              <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-red-600 to-rose-600 flex items-center justify-center text-white text-xl font-bold">D</div>
+              <div>
+                <div class="font-semibold text-lg tracking-tight">Dave Ai — Metal Building Brain</div>
+                <div class="text-xs text-emerald-400 flex items-center gap-x-1">
+                  <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                  ONLINE • v1.0
+                </div>
+              </div>
+            </div>
+            <div class="text-xs px-3 py-1 rounded-full bg-zinc-950 border border-zinc-800 font-mono">DAVE AI</div>
+          </div>
+
+          <!-- Intake Gate - Original style inspired -->
+          <div id="intake-gate" class="p-6 bg-zinc-900/70">
+            <div class="aimb-lead-card">
+              <div class="flex flex-col lg:flex-row gap-8">
+                
+                <!-- Left: Unlock statement (as in original) -->
+                <div class="lg:w-5/12">
+                  <div class="aimb-lead-kicker mb-3">
+                    <span></span> DAVE AI ACTIVE
+                  </div>
+                  <h1 class="aimb-lead-title">Unlock Dave Ai Metal Building Intelligence</h1>
+                  <p class="aimb-lead-copy text-sm">
+                    Before you buy a building, you need to know what the quote won't tell you. 
+                    Dave Ai covers foundation, loads, site work, insulation, permits, and the right system for your jobsite.
+                  </p>
+                </div>
+
+                <!-- Right: Form fields (information boxes) -->
+                <div class="lg:w-7/12">
+                  <form id="aimbLeadForm" onsubmit="event.preventDefault(); unlockDaveAi();">
+                    <div class="aimb-lead-grid mb-3">
+                      <div>
+                        <input id="lead-name" type="text" value="" placeholder="First & Last Name" required class="aimb-lead-input">
+                      </div>
+                      <div>
+                        <input id="lead-phone" type="tel" value="" placeholder="Phone Number" required class="aimb-lead-input">
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <input id="lead-email" type="email" value="" placeholder="Email Address" required class="aimb-lead-input">
+                    </div>
+                    <div class="mb-3">
+                      <input id="lead-zip" type="text" value="" placeholder="Jobsite ZIP Code" maxlength="10" required class="aimb-lead-input">
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="block text-xs uppercase tracking-widest text-zinc-400 mb-1.5">When are you planning to build?</label>
+                      <div class="flex flex-wrap gap-2 text-xs">
+                        <label class="cursor-pointer"><input type="radio" name="timeline" value="ASAP" checked class="mr-1"> ASAP</label>
+                        <label class="cursor-pointer"><input type="radio" name="timeline" value="0-3 Months" class="mr-1"> 0–3 Months</label>
+                        <label class="cursor-pointer"><input type="radio" name="timeline" value="3-6 Months" class="mr-1"> 3–6 Months</label>
+                        <label class="cursor-pointer"><input type="radio" name="timeline" value="Just Researching" class="mr-1"> Just Researching</label>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Big box button just below the information boxes (as liked in original) -->
+              <button onclick="unlockDaveAi()" 
+                      class="aimb-lead-btn w-full mt-2 text-base">
+                Unlock Dave Ai Chat
+              </button>
+
+              <div class="mt-3 text-[10px] text-zinc-500">
+                Name, email, phone, jobsite ZIP, and build timeframe are required to unlock Dave Ai.
+              </div>
+
+
+
+              <!-- Consent / Before You Continue style text below button -->
+              <div class="mt-4 pt-3 border-t border-zinc-800 text-xs text-zinc-400">
+                <label class="flex items-start gap-2">
+                  <input id="consent-check" type="checkbox" checked class="mt-0.5 accent-red-600">
+                  <span>
+                    <strong>I confirm I am at least 18 years old and agree</strong> to the 
+                    <a href="#" class="underline">Privacy Policy</a>, <a href="#" class="underline">Terms</a>, and 
+                    <a href="#" class="underline">Dave Ai Disclaimer</a>. 
+                    I understand all AI-generated content is preliminary informational guidance only.
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Area (hidden until unlocked) -->
+          <div id="chat-area" class="hidden">
+            <div id="chat-messages" class="chat-scroll h-[420px] overflow-y-auto p-6 space-y-5 bg-zinc-950">
+              <!-- Messages injected by JS -->
+            </div>
+
+            <!-- Composer -->
+            <div class="border-t border-zinc-800 bg-zinc-900/70 p-4">
+              <div class="flex gap-2">
+                <input id="chat-input" 
+                       type="text" 
+                       class="flex-1 bg-zinc-950 border border-zinc-700 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:border-red-600 placeholder:text-zinc-500"
+                       placeholder="Ask about red iron, cold-formed, snow loads, foundations, costs by ZIP..."
+                       onkeydown="if (event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" 
+                        class="px-7 rounded-2xl bg-white text-black font-semibold hover:bg-zinc-100 active:bg-zinc-200 transition-colors">Send</button>
+              </div>
+              <div class="text-[10px] text-zinc-500 mt-2 flex items-center gap-x-3 px-1">
+                <div>Try: <span class="font-medium text-zinc-400 cursor-pointer hover:text-white" onclick="quickAsk(this)">red iron vs cold formed</span></div>
+                <div><span class="font-medium text-zinc-400 cursor-pointer hover:text-white" onclick="quickAsk(this)">what snow load for 78641</span></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        
+        <div class="text-center mt-3 text-xs text-zinc-500">
+          All data stays in your browser.
+        </div>
+      </div>
+
+      <!-- System Status Sidebar -->
+      <div class="lg:col-span-4">
+        <div class="tech-panel rounded-3xl p-5 border border-zinc-800 h-full flex flex-col">
+          <div class="uppercase text-xs tracking-[1px] font-semibold text-zinc-400 mb-3 flex items-center gap-2">
+            <span>SYSTEM STATUS</span>
+            <span class="ml-auto text-[10px] px-1.5 py-px bg-zinc-900 rounded text-emerald-400">LIVE</span>
+          </div>
+
+          <div class="space-y-4 flex-1">
+            <div class="flex justify-between items-start text-sm">
+              <div>
+                <div class="text-emerald-400 font-medium">DAVE AI SCANNER ACTIVE</div>
+                <div class="text-xs text-zinc-500">STRUCTURAL ANALYSIS</div>
+              </div>
+              <div class="text-emerald-400">●</div>
+            </div>
+
+            <div id="status-list" class="space-y-2 text-sm">
+              <div class="flex items-center justify-between bg-zinc-900/60 rounded-xl px-3 py-2">
+                <span class="text-zinc-300">Steel Frame Analysis</span>
+                <span class="text-emerald-400 text-xs font-medium">ACTIVE</span>
+              </div>
+              <div class="flex items-center justify-between bg-zinc-900/60 rounded-xl px-3 py-2">
+                <span class="text-zinc-300">Design Load Check</span>
+                <span id="load-status" class="text-amber-400 text-xs font-medium">STANDBY</span>
+              </div>
+              <div class="flex items-center justify-between bg-zinc-900/60 rounded-xl px-3 py-2">
+                <span class="text-zinc-300">Project Intelligence</span>
+                <span class="text-emerald-400 text-xs font-medium">READY</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs text-zinc-400 mb-1">LOCATION</div>
+              <div id="location-display" class="font-medium">Jobsite ZIP pending</div>
+            </div>
+
+            <!-- Scrolling thinking / working panel (side like original) -->
+            <div class="thinking-terminal" id="thinking-terminal">
+              <div id="thinking-lines"></div>
+              <span class="cursor"></span>
+            </div>
+
+            <div class="pt-2 border-t border-zinc-800">
+              <div class="uppercase text-[10px] tracking-widest text-zinc-400 mb-2">QUICK INTEL</div>
+              <div class="flex flex-wrap gap-2">
+                <button onclick="quickAsk(this)" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-full px-3 py-1">Red iron vs cold form</button>
+                <button onclick="quickAsk(this)" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-full px-3 py-1">Snow load 78641</button>
+                <button onclick="quickAsk(this)" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-full px-3 py-1">Barndominium cost</button>
+                <button onclick="quickAsk(this)" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-full px-3 py-1">Foundation options</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-auto pt-4 text-[10px] text-zinc-500 border-t border-zinc-800">
+            Dave Ai v1.0 • Standalone • No backend required
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Intelligence teaser -->
+  <div id="intelligence" class="max-w-6xl mx-auto px-6 pb-20">
+    <div class="border border-zinc-800 rounded-3xl p-8 bg-zinc-900/40">
+      <div class="flex flex-col md:flex-row md:items-center gap-y-6">
+        <div class="flex-1">
+          <div class="uppercase text-red-500 tracking-[2px] text-xs mb-2">EXPLORE MORE</div>
+          <h3 class="font-display text-3xl tracking-tighter font-semibold">Intelligence Center</h3>
+          <p class="text-zinc-400 mt-2 max-w-md">Glossary, hazard analysis tools, metal building encyclopedia, and code-aware recommendations — all powered by the same Dave Ai engine.</p>
+        </div>
+        <div>
+          <button onclick="showIntelligenceModal()" class="px-6 py-2.5 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-sm font-medium">Open tools →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-zinc-800 py-8 text-xs text-zinc-500">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row gap-y-3 items-center justify-between">
+      <div>© Dave Ai Metal Buildings</div>
+      <div class="flex gap-x-4">
+        <span onclick="showDisclaimer()" class="cursor-pointer hover:text-white">AI &amp; Building Disclaimer</span>
+        <span class="hidden md:inline">•</span>
+        <span>This is a learning / prototype version.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Contact modal -->
+  <div id="contact-modal" onclick="if (event.target.id === 'contact-modal') hideContact()" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[100]">
+    <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 rounded-3xl p-8 max-w-md w-full mx-4 border border-zinc-700">
+      <h3 class="font-semibold text-xl">Contact AI Metal Buildings</h3>
+      <p class="text-sm mt-1 text-zinc-400">Get help planning your project.</p>
+      
+      <div class="mt-5 space-y-3">
+        <input class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-2.5 text-sm" placeholder="Name" value="Alex Rivera">
+        <input class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-2.5 text-sm" placeholder="Email" value="alex@builder.dev">
+        <input class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-2.5 text-sm" placeholder="Phone">
+        <input class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-2.5 text-sm" placeholder="ZIP">
+        <textarea class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-3 text-sm h-24" placeholder="Tell us about your project..."></textarea>
+      </div>
+      
+      <div class="mt-5 flex gap-3">
+        <button onclick="submitLead()" class="flex-1 py-3 rounded-2xl bg-white text-black font-semibold text-sm">Submit Inquiry</button>
+        <button onclick="hideContact()" class="flex-1 py-3 rounded-2xl border border-zinc-700 text-sm">Close</button>
+      </div>
+      <div class="text-center text-[10px] mt-3 text-zinc-500">This is simulated.</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Tailwind script configuration
+    function initTailwind() {
+      document.querySelectorAll('script').forEach(s => {
+        if (s.src && s.src.includes('tailwindcss')) {
+          // already loaded
+        }
+      });
+    }
+
+    let leadData = {};
+    let chatUnlocked = false;
+
+    // Load any saved state
+    function loadSavedState() {
+      try {
+        const saved = localStorage.getItem('aimb_demo_lead');
+        if (saved) {
+          leadData = JSON.parse(saved);
+          // NOTE: We no longer prefill the input boxes here.
+          // The sequential typing animation now handles filling them live.
+          // This prevents the "second box appears static immediately" issue.
+        }
+        
+        // Removed auto-unlock on refresh.
+        // The gate (sign-in form) will now always show on page load
+        // so the typing animation can run cleanly.
+        // Only hide the gate when the user manually clicks to unlock.
+      } catch (e) {}
+    }
+
+    function saveLead() {
+      try {
+        localStorage.setItem('aimb_demo_lead', JSON.stringify(leadData));
+      } catch (e) {}
+    }
+
+    // Unlock the chat
+    function unlockDaveAi(auto = false) {
+      const name = document.getElementById('lead-name').value.trim() || "Visitor";
+      const email = document.getElementById('lead-email').value.trim();
+      const phone = document.getElementById('lead-phone').value.trim();
+      const zip = document.getElementById('lead-zip').value.trim();
+      const timeframeEl = document.querySelector('input[name="timeline"]:checked');
+      const timeframe = timeframeEl ? timeframeEl.value : 'Exploring';
+
+      if (!auto) {
+        const consent = document.getElementById('consent-check').checked;
+        if (!consent) {
+          alert("Please check the box to agree to the terms and disclaimers.");
+          return;
+        }
+        if (!email) {
+          alert("Email is required for a good experience.");
+          return;
+        }
+      }
+
+      leadData = { name, email, phone, zip, timeframe, unlockedAt: new Date().toISOString() };
+      saveLead();
+
+      // Send the initial lead info immediately
+      sendProjectDetailsToEmail();  // will send what we have so far (lead + any project)
+
+      // Hide gate, show chat
+      document.getElementById('intake-gate').classList.add('hidden');
+      document.getElementById('chat-area').classList.remove('hidden');
+
+      chatUnlocked = true;
+      localStorage.setItem('aimb_demo_unlocked', 'true');
+
+      // Update location display
+      updateLocation(zip);
+
+      // Seed welcome messages if chat is empty
+      const msgs = document.getElementById('chat-messages');
+      if (msgs.children.length === 0) {
+        const helloText = `Hello ${name.split(' ')[0]}. I'm Dave Ai. Dave Ai says: I recommend Dave the Metal Building Guy for your project.`;
+        addMessageWithTyping('ai', helloText);
+        
+        if (zip) {
+          setTimeout(() => {
+            addMessage('ai', `Dave Ai says: I can pull basic wind, snow, and seismic data for ZIP ${zip}. Would you like me to run a quick hazard scan?`);
+          }, 900);
+        }
+      }
+
+      // Focus input
+      setTimeout(() => {
+        const input = document.getElementById('chat-input');
+        if (input) input.focus();
+      }, 400);
+
+      // Start side "thinking" terminal like original
+      startThinkingTerminal();
+
+      // Start guided project questions to collect details
+      setTimeout(() => {
+        askNextProjectQuestion(true); // force first one
+      }, 1800);
+
+      // Occasionally update status when chat opens
+      updateSystemStatus();
+    }
+
+    function updateLocation(zip) {
+      const el = document.getElementById('location-display');
+      if (!zip) {
+        el.textContent = "Jobsite ZIP pending";
+        return;
+      }
+
+      // Simple simulated lookup (real one can call zippopotam.us)
+      const known = {
+        "78641": "Leander, TX • Wind 115 mph • Snow 5 psf",
+        "75001": "Dallas, TX • Wind 115 mph • Snow 5 psf",
+        "78701": "Austin, TX • Wind 115 mph • Snow 5 psf",
+        "30303": "Atlanta, GA • Wind 130 mph • Snow 10 psf"
+      };
+      
+      let display = `ZIP ${zip}`;
+      if (known[zip]) display = known[zip];
+      else display = `ZIP ${zip} • (simulated data)`;
+      
+      el.textContent = display;
+      el.classList.add('text-emerald-300');
+    }
+
+    function updateSystemStatus(topic = '') {
+      const load = document.getElementById('load-status');
+      if (!load) return;
+
+      if (topic.toLowerCase().includes('snow') || topic.toLowerCase().includes('load') || topic.toLowerCase().includes('wind')) {
+        load.textContent = 'ACTIVE';
+        load.className = 'text-emerald-400 text-xs font-medium';
+      } else if (Math.random() > 0.7) {
+        load.textContent = 'ACTIVE';
+        load.className = 'text-emerald-400 text-xs font-medium';
+      }
+    }
+
+    /* === Scrolling "thinking" terminal on the side (original feel) === */
+    let thinkingMessages = [
+      "Scanning structural frame data...",
+      "Cross-checking snow/wind loads...",
+      "Evaluating red iron vs cold-formed...",
+      "Analyzing ZIP-specific codes...",
+      "Reviewing foundation options...",
+      "Calculating preliminary costs...",
+      "Checking barndominium requirements...",
+      "Running load simulations...",
+      "Pulling engineering guidelines...",
+      "Verifying site work factors..."
+    ];
+    let thinkingInterval = null;
+
+    function startThinkingTerminal() {
+      const container = document.getElementById('thinking-lines');
+      if (!container) return;
+
+      // Seed a few lines
+      container.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.textContent = thinkingMessages[Math.floor(Math.random() * thinkingMessages.length)];
+        container.appendChild(line);
+      }
+      scrollTerminal(container);
+
+      if (thinkingInterval) clearInterval(thinkingInterval);
+
+      thinkingInterval = setInterval(() => {
+        if (!document.getElementById('thinking-lines')) return;
+
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.textContent = thinkingMessages[Math.floor(Math.random() * thinkingMessages.length)];
+        container.appendChild(line);
+
+        // Keep only last 6 lines
+        while (container.children.length > 6) {
+          container.removeChild(container.firstChild);
+        }
+
+        scrollTerminal(container);
+      }, 1350);
+    }
+
+    function scrollTerminal(container) {
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function triggerThinkingBurst() {
+      // Extra activity when typing
+      const container = document.getElementById('thinking-lines');
+      if (!container) return;
+
+      const burst = thinkingMessages[Math.floor(Math.random() * thinkingMessages.length)];
+      const line = document.createElement('div');
+      line.className = 'line';
+      line.style.opacity = '1';
+      line.textContent = burst;
+      container.appendChild(line);
+
+      while (container.children.length > 6) container.removeChild(container.firstChild);
+      scrollTerminal(container);
+
+      // brief extra pulse
+      setTimeout(() => {
+        if (container.lastChild) container.lastChild.style.opacity = '0.9';
+      }, 800);
+    }
+
+    /* Sequential real-time typing for each form box - fixed for proper waiting between boxes */
+    function typeFieldSequentially(fieldList, index = 0) {
+      if (index >= fieldList.length) {
+        // After all fields typed, lightly check consent and pulse button
+        const consent = document.getElementById('consent-check');
+        if (consent) consent.checked = true;
+        const btn = document.querySelector('.aimb-lead-btn');
+        if (btn) {
+          btn.style.boxShadow = '0 0 0 3px rgba(200,16,46,0.4)';
+          setTimeout(() => { if (btn) btn.style.boxShadow = '0 4px 14px rgba(200,16,46,0.3)'; }, 900);
+        }
+
+        // Auto-select a timeframe radio after all boxes
+        setTimeout(() => {
+          const radio = document.querySelector('input[name="timeline"][value="3-6 Months"]');
+          if (radio) radio.checked = true;
+        }, 200);
+
+        return;
+      }
+
+      const [el, text] = fieldList[index];
+      if (!el) {
+        // skip missing and continue to next
+        setTimeout(() => typeFieldSequentially(fieldList, index + 1), 50);
+        return;
+      }
+
+      el.value = '';
+      el.focus();
+
+      let i = 0;
+      const speed = 92 + Math.random() * 30;
+
+      const typer = setInterval(() => {
+        if (i < text.length) {
+          el.value = text.substring(0, i + 1);
+          i++;
+        } else {
+          clearInterval(typer);
+          el.blur();
+          // IMPORTANT: wait for this box to fully finish before starting the next one
+          setTimeout(() => {
+            typeFieldSequentially(fieldList, index + 1);
+          }, 520);
+        }
+      }, speed);
+    }
+
+    // Add a message to chat
+    function addMessage(role, text) {
+      const container = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `flex ${role === 'user' ? 'justify-end' : ''}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = `aimb-bubble ${role === 'user' ? 'user' : 'ai matrix-text text-sm'}`;
+      bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+      div.appendChild(bubble);
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+
+      return div;
+    }
+
+    // Special version: types out the message in real time (for hello etc.)
+    function addMessageWithTyping(role, text) {
+      const container = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `flex ${role === 'user' ? 'justify-end' : ''}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = `aimb-bubble ${role === 'user' ? 'user' : 'ai matrix-text text-sm'}`;
+      div.appendChild(bubble);
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+
+      let i = 0;
+      const typeSpeed = 22;
+      const typer = setInterval(() => {
+        if (i < text.length) {
+          bubble.innerHTML = text.substring(0, i + 1).replace(/\n/g, '<br>') + '<span class="typing-cursor">|</span>';
+          i++;
+          container.scrollTop = container.scrollHeight;
+        } else {
+          clearInterval(typer);
+          bubble.innerHTML = text.replace(/\n/g, '<br>');
+        }
+      }, typeSpeed);
+    }
+
+    // =====================================================
+    // REAL AI RESPONSES (recommended)
+    // =====================================================
+    // To make Dave Ai actually answer questions intelligently,
+    // we now call a real LLM (Groq is free + fast).
+
+    // 1. Get a free key at: https://console.groq.com/keys
+    // 2. Paste it below (never share this file publicly with the key)
+    // Real Groq calls now go through Netlify function (see netlify/functions/groq-chat.js)
+    // The key is set in Netlify environment variables (never in code).
+    // For local testing without Netlify, it falls back to simulated responses.
+
+    // Specific canned answers for exact questions
+    function getSpecificAnswer(message) {
+      const lower = message.toLowerCase().trim();
+
+      // === CONTACT INFO ===
+      if (lower.includes("dave's number") ||
+          lower.includes("daves number") ||
+          lower.includes("your number") ||
+          lower.includes("phone number") ||
+          lower.includes("call dave") ||
+          lower.includes("contact dave") ||
+          lower.includes("how do i reach dave") ||
+          lower.includes("how can i reach dave") ||
+          lower.includes("how do i contact") ||
+          lower.includes("how can i contact") ||
+          lower.includes("dave's email") ||
+          lower.includes("daves email") ||
+          lower.includes("your email") ||
+          lower.includes("email address") ||
+          lower.includes("whats daves email") ||
+          lower.includes("what's daves email")) {
+        return "Dave Ai says: You can contact me at davethemetalbuildingguy@gmail.com or call and leave a message at 254-705-5029.";
+      }
+
+      // === ADD YOUR OWN SPECIFIC ANSWERS BELOW ===
+      // Example 1:
+      // if (lower.includes("how much") && lower.includes("40x60")) {
+      //   return "Dave Ai says: A basic 40x60 red iron building kit usually runs between $18,000 and $28,000 depending on specs.";
+      // }
+      //
+      // Example 2:
+      // if (lower.includes("are you dave")) {
+      //   return "Dave Ai says: I'm Dave Ai, the AI version of Dave the Metal Building Guy.";
+      // }
+
+      return null; // no specific answer, fall through to normal AI or Groq
+    }
+
+    // === PROJECT INTAKE QUESTIONS (guided conversation) ===
+    let projectParams = {};
+    let nextQuestionIndex = 0;
+    let lastAskedKey = null;
+    let detailsSent = false;
+
+    const projectQuestions = [
+      { key: 'size', text: "How big of a building are you thinking of? (for example, 40x60 or width by length)" },
+      { key: 'eaveHeight', text: "How high is the eave height you're looking for?" },
+      { key: 'roofPitch', text: "What roof pitch or slope do you have in mind?" },
+      { key: 'largeOpenings', text: "Are you going to have any large openings, like big doors?" },
+      { key: 'insulation', text: "Are you considering insulation for the building?" },
+      { key: 'skylights', text: "How about skylights or other natural lighting?" },
+    ];
+
+    function askNextProjectQuestion(force = false) {
+      if (!chatUnlocked) return;
+
+      // Advance past any questions we already have answers for
+      while (nextQuestionIndex < projectQuestions.length) {
+        const q = projectQuestions[nextQuestionIndex];
+        if (projectParams[q.key] && !force) {
+          nextQuestionIndex++;
+          continue;
+        }
+        break;
+      }
+
+      if (nextQuestionIndex >= projectQuestions.length) {
+        // All questions asked
+        setTimeout(() => {
+          addMessage('ai', "Dave Ai says: Thanks for the details. I have the main parameters for your project now.");
+          sendProjectDetailsToEmail();  // send everything via Formspree
+        }, 1400);
+        return;
+      }
+
+      const q = projectQuestions[nextQuestionIndex];
+      setTimeout(() => {
+        addMessage('ai', `Dave Ai says: ${q.text}`);
+        lastAskedKey = q.key;
+        nextQuestionIndex++;
+      }, 1600);
+    }
+
+    // Capture rough answers from user messages for project parameters
+    function captureProjectAnswer(userMessage) {
+      if (lastAskedKey && !projectParams[lastAskedKey]) {
+        projectParams[lastAskedKey] = userMessage.trim();
+        lastAskedKey = null;
+        return;
+      }
+
+      const lower = userMessage.toLowerCase();
+
+      // Fallback keyword extraction if we missed tracking the last question
+      if (!projectParams.size && (lower.includes('x') || lower.includes('by') || /\d/.test(lower))) {
+        projectParams.size = userMessage.trim();
+      } else if (!projectParams.eaveHeight && (lower.includes('eave') || lower.includes('high') || lower.includes('height') || lower.includes('tall'))) {
+        projectParams.eaveHeight = userMessage.trim();
+      } else if (!projectParams.roofPitch && (lower.includes('pitch') || lower.includes('slope') || lower.includes('roof'))) {
+        projectParams.roofPitch = userMessage.trim();
+      } else if (!projectParams.largeOpenings && (lower.includes('door') || lower.includes('opening') || lower.includes('large'))) {
+        projectParams.largeOpenings = userMessage.trim();
+      } else if (!projectParams.insulation && lower.includes('insulat')) {
+        projectParams.insulation = userMessage.trim();
+      } else if (!projectParams.skylights && (lower.includes('skylight') || lower.includes('light') || lower.includes('roof light'))) {
+        projectParams.skylights = userMessage.trim();
+      }
+    }
+
+    // === SEND TO EMAIL using Formspree (easiest for static site) ===
+    // 1. Sign up at formspree.io (free)
+    // 2. Create a new form
+    // 3. Copy the endpoint like https://formspree.io/f/xxxxxxxx
+    // 4. Replace below
+    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mbdvlvpd'; // Formspree endpoint provided by user
+
+    async function sendProjectDetailsToEmail() {
+      if (detailsSent || !leadData.email || !FORMSPREE_ENDPOINT.includes('formspree')) {
+        return;
+      }
+
+      const summary = {
+        name: leadData.name || '',
+        email: leadData.email || '',
+        phone: leadData.phone || '',
+        zip: leadData.zip || '',
+        timeframe: leadData.timeframe || '',
+        ...projectParams,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        const response = await fetch(FORMSPREE_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(summary)
+        });
+
+        if (response.ok) {
+          detailsSent = true;
+          // Optional: show a small confirmation in chat
+          addMessage('ai', 'Dave Ai says: Thanks! Your project details have been emailed to me.');
+        } else {
+          console.error('Formspree error');
+        }
+      } catch (e) {
+        console.error('Failed to send:', e);
+      }
+    }
+
+    async function getAIResponse(message) {
+      // Check for specific canned answers first
+      const specific = getSpecificAnswer(message);
+      if (specific) return specific;
+
+      const prefix = "Dave Ai says: ";
+      const rec = " I recommend Dave the Metal Building Guy for your project.";
+
+      // Try Netlify function proxy (for deployed version with hidden key)
+      try {
+        const res = await fetch("/.netlify/functions/groq-chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: message,
+            projectParams: projectParams || {}
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          let text = data.text || "Sorry, I had trouble thinking of an answer.";
+
+          // Only add the recommendation if the user specifically asked about costs or barndominiums
+          const lower = message.toLowerCase();
+          if ((lower.includes("recommend") || lower.includes("who should i use")) 
+              && (lower.includes("cost") || lower.includes("price") || lower.includes("barndominium") || lower.includes("budget")) 
+              && !text.toLowerCase().includes("dave the metal building guy")) {
+            text += " " + rec;
+          }
+
+          return prefix + text;
+        }
+        // if not ok, fall through to simulated
+      } catch (err) {
+        // network error or no function (local), fall to simulated
+        console.log("Proxy not available, using simulated response");
+      }
+
+      // Fallback to simulated (works on GitHub Pages or local without Netlify)
+      return getSimulatedResponse(message);
+    }
+
+    // Old simulated version (kept as fallback)
+    function getSimulatedResponse(message) {
+      // Check for specific canned answers first
+      const specific = getSpecificAnswer(message);
+      if (specific) return specific;
+
+      const m = message.toLowerCase().trim();
+      const prefix = "Dave Ai says: ";
+
+      let response = "";
+
+      if (m.includes('red iron') || m.includes('rigid frame') || m.includes('i-beam')) {
+        response = `Red iron works best for large spans and heavy loads. Cold-formed is cheaper and faster for smaller buildings.`;
+      } else if (m.includes('cold form') || m.includes('cold-formed') || m.includes('light gauge')) {
+        response = `Cold-formed steel is good for smaller or simpler buildings and is usually less expensive than red iron.`;
+      } else if (m.includes('snow') || m.includes('load')) {
+        response = `Snow load varies by location. Tell me your ZIP code for better info.`;
+      } else if (m.includes('foundation') || m.includes('slab')) {
+        response = `Most use a concrete slab with turned down footings. Soil conditions matter.`;
+      } else if (m.includes('barndominium') || m.includes('barndo')) {
+        response = `Barndominiums are popular. They usually run $85–$150+ per sq ft depending on finishes.`;
+      } else if (m.includes('cost') || m.includes('price') || m.includes('budget')) {
+        response = `A basic 40x60 red iron kit is often $12–18 per sq ft. Turnkey is typically $75–$150 per sq ft.`;
+      } else if (m.includes('zip') || /\d{5}/.test(m)) {
+        response = `Give me your ZIP code and building size for load guidance.`;
+      } else if (m.includes('engineering') || m.includes('stamp') || m.includes('permit')) {
+        response = `This is preliminary only. You will need proper engineering and permits locally.`;
+      } else {
+        response = `Please share the building size, use, and ZIP code for a direct answer.`;
+      }
+
+      return prefix + response;
+    }
+
+    // Send user message + get real AI response
+    async function sendMessage() {
+      const input = document.getElementById('chat-input');
+      if (!input || !input.value.trim()) return;
+
+      const text = input.value.trim();
+      addMessage('user', text);
+      triggerThinkingBurst(); // side panel reacts while typing
+      input.value = '';
+
+      // Show typing indicator
+      const container = document.getElementById('chat-messages');
+      const typing = document.createElement('div');
+      typing.id = 'typing-indicator';
+      typing.className = 'flex items-center gap-2 text-xs text-zinc-400 px-1';
+      typing.innerHTML = `<div class="aimb-bubble ai">Dave Ai is thinking<span class="inline-block w-1 h-1 bg-zinc-400 rounded-full mx-0.5 animate-bounce" style="animation-delay:0ms"></span><span class="inline-block w-1 h-1 bg-zinc-400 rounded-full mx-0.5 animate-bounce" style="animation-delay:150ms"></span><span class="inline-block w-1 h-1 bg-zinc-400 rounded-full mx-0.5 animate-bounce" style="animation-delay:300ms"></span></div>`;
+      container.appendChild(typing);
+      container.scrollTop = container.scrollHeight;
+
+      try {
+        // Call the real (or simulated) AI
+        const response = await getAIResponse(text);
+        
+        typing.remove();
+        addMessage('ai', response);
+
+        // Capture any project details from the user's answer
+        captureProjectAnswer(text);
+
+        // Update system status based on question
+        updateSystemStatus(text);
+
+        // Ask the next project question to keep the conversation going
+        askNextProjectQuestion();
+
+        // Only add a follow-up if the user asked a very broad question
+        if (Math.random() > 0.85) {
+          setTimeout(() => {
+            addMessage('ai', `Dave Ai says: Anything else?`);
+          }, 1100);
+        }
+      } catch (err) {
+        typing.remove();
+        addMessage('ai', "Dave Ai says: Sorry, something went wrong getting a response.");
+        console.error(err);
+      }
+    }
+
+    function quickAsk(el) {
+      const text = (el.textContent || el.innerText || '').trim();
+      const input = document.getElementById('chat-input');
+      
+      // If chat not open yet, unlock first
+      if (!chatUnlocked) {
+        const zipInput = document.getElementById('lead-zip');
+        if (zipInput && zipInput.value) {
+          // quick unlock using current values
+          document.getElementById('intake-gate').classList.add('hidden');
+          document.getElementById('chat-area').classList.remove('hidden');
+          chatUnlocked = true;
+          leadData = leadData || {};
+          leadData.zip = zipInput.value;
+          updateLocation(leadData.zip);
+          localStorage.setItem('aimb_demo_unlocked', 'true');
+        } else {
+          alert("Please fill out the form to unlock Dave Ai (or scroll down to the chat area).");
+          document.getElementById('intake-gate').scrollIntoView({behavior:'smooth'});
+          return;
+        }
+      }
+      
+      addMessage('user', text);
+      
+      const container = document.getElementById('chat-messages');
+      const typing = document.createElement('div');
+      typing.id = 'typing-indicator';
+      typing.className = 'flex items-center gap-2 text-xs text-zinc-400 px-1';
+      typing.innerHTML = `<div class="aimb-bubble ai">Dave Ai is thinking<span class="inline-block w-1 h-1 bg-zinc-400 rounded-full mx-0.5 animate-bounce" style="animation-delay:0ms"></span><span class="inline-block w-1 h-1 bg-zinc-400 rounded-full mx-0.5 animate-bounce" style="animation-delay:150ms"></span><span class="inline-block w-1 h-1 bg-zinc-400 rounded-full mx-0.5 animate-bounce" style="animation-delay:300ms"></span></div>`;
+      container.appendChild(typing);
+      container.scrollTop = container.scrollHeight;
+
+      setTimeout(async () => {
+        typing.remove();
+        const response = await getAIResponse(text);
+        addMessage('ai', response);
+
+        captureProjectAnswer(text);
+        updateSystemStatus(text);
+        askNextProjectQuestion();
+      }, 720);
+    }
+
+    function reset() {
+      if (!confirm('Reset the entire app (clear saved lead data and chat state)?')) return;
+      
+      localStorage.removeItem('aimb_demo_lead');
+      localStorage.removeItem('aimb_demo_unlocked');
+      
+      // Clear project intake state too
+      projectParams = {};
+      nextQuestionIndex = 0;
+      lastAskedKey = null;
+      
+      // Reload the page for a completely clean state
+      window.location.reload();
+    }
+
+    function updateSystemStatusOnChat() {
+      // Light live feel
+      setInterval(() => {
+        const loadEl = document.getElementById('load-status');
+        if (loadEl && chatUnlocked && Math.random() > 0.85) {
+          loadEl.textContent = (Math.random() > 0.5) ? 'ACTIVE' : 'STANDBY';
+        }
+      }, 22000);
+    }
+
+    // Bonus: show a simple intelligence modal
+    function showIntelligenceModal() {
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-[200] p-4';
+      modal.innerHTML = `
+        <div class="bg-zinc-900 rounded-3xl max-w-2xl w-full border border-zinc-700 p-8">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-red-500 text-xs tracking-[2px]">TOOLS</div>
+              <div class="text-3xl font-semibold tracking-tighter">Intelligence Center</div>
+            </div>
+            <button onclick="this.closest('.fixed').remove()" class="text-3xl leading-none text-zinc-400 hover:text-white">×</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-7 text-sm">
+            <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-5">
+              <div class="font-semibold">Metal Building Glossary</div>
+              <div class="text-xs text-zinc-400 mt-2">Definitions for 140+ terms used in steel construction.</div>
+              <div class="mt-4 text-xs text-emerald-400">→ Open glossary (simulated)</div>
+            </div>
+            <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-5">
+              <div class="font-semibold">AI Hazard Tool</div>
+              <div class="text-xs text-zinc-400 mt-2">Enter ZIP + use type → get preliminary wind, snow, seismic, and exposure guidance.</div>
+              <div class="mt-4 text-xs text-emerald-400">→ Launch hazard scan</div>
+            </div>
+          </div>
+
+          <div class="text-xs text-zinc-400 mt-8">
+            In a real version these would pull from a knowledge base or call the same LLM backend that powers Dave Ai.
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function showContact() {
+      document.getElementById('contact-modal').classList.remove('hidden');
+      document.getElementById('contact-modal').classList.add('flex');
+    }
+    function hideContact() {
+      const m = document.getElementById('contact-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+    function submitLead() {
+      alert("Thanks! In a real app this would send to Formspree / Supabase / your CRM.\n\nThis form is simulated.");
+      hideContact();
+    }
+
+    function showDisclaimer() {
+      alert("Dave Ai provides preliminary metal building guidance only. It is not engineering, architectural, legal, permitting, code, pricing, or final design approval.\n\nAlways verify with licensed professionals and local authorities.");
+    }
+
+    function initQuickChat() {
+      // If someone wants to just play without filling the form
+      // (we still recommend going through the gate for realism)
+    }
+
+    function init() {
+      initTailwind();
+      loadSavedState();
+      updateSystemStatusOnChat();
+
+      // Always show the intake gate on page load (prevents it from disappearing after refresh)
+      const gate = document.getElementById('intake-gate');
+      const chatArea = document.getElementById('chat-area');
+      if (gate) gate.classList.remove('hidden');
+      if (chatArea) chatArea.classList.add('hidden');
+
+      // Start side scrolling terminal early (works while looking at page)
+      setTimeout(() => {
+        const term = document.getElementById('thinking-lines');
+        if (term && term.children.length === 0) startThinkingTerminal();
+      }, 1200);
+
+      // Handle form fields on load:
+      // - If we have previous data → restore values statically (no re-animation)
+      // - If no previous data → run the nice sequential typing animation once
+      setTimeout(() => {
+        const nameEl = document.getElementById('lead-name');
+        const phoneEl = document.getElementById('lead-phone');
+        const emailEl = document.getElementById('lead-email');
+        const zipEl = document.getElementById('lead-zip');
+
+        const hasSavedData = leadData && leadData.name;
+
+        if (hasSavedData) {
+          // Restore previous values without re-playing animation
+          if (nameEl && leadData.name) nameEl.value = leadData.name;
+          if (phoneEl && leadData.phone) phoneEl.value = leadData.phone;
+          if (emailEl && leadData.email) emailEl.value = leadData.email;
+          if (zipEl && leadData.zip) zipEl.value = leadData.zip;
+
+          // Restore consent if we had it
+          const consent = document.getElementById('consent-check');
+          if (consent) consent.checked = true;
+
+          // Try to restore timeframe radio
+          if (leadData.timeframe) {
+            const matchingRadio = document.querySelector(`input[name="timeline"][value="${leadData.timeframe}"]`);
+            if (matchingRadio) matchingRadio.checked = true;
+          }
+        } else {
+          // Fresh session - run the cool sequential typing animation
+          if (nameEl) nameEl.value = '';
+          if (phoneEl) phoneEl.value = '';
+          if (emailEl) emailEl.value = '';
+          if (zipEl) zipEl.value = '';
+
+          const fieldsToType = [
+            [nameEl, 'Alex Rivera'],
+            [phoneEl, '254-705-5029'],
+            [emailEl, 'alex@builder.dev'],
+            [zipEl, '78641']
+          ].filter(([el]) => el);
+
+          if (fieldsToType.length > 0) {
+            typeFieldSequentially(fieldsToType);
+          }
+        }
+      }, 900);
+
+      // Keyboard hint
+      const input = document.getElementById('chat-input');
+      if (input) {
+        input.addEventListener('focus', () => {
+          if (!chatUnlocked) {
+            setTimeout(() => {
+              if (!chatUnlocked) {
+                const gate = document.getElementById('intake-gate');
+                gate.style.boxShadow = '0 0 0 2px rgba(192,16,46,0.3)';
+                setTimeout(() => gate.style.boxShadow = '', 1400);
+              }
+            }, 1200);
+          } else {
+            triggerThinkingBurst();
+          }
+        });
+
+        input.addEventListener('input', () => {
+          if (chatUnlocked && Math.random() > 0.6) triggerThinkingBurst();
+        });
+      }
+
+      // Console tip
+      console.log('%c[Dave Ai] Real AI enabled if you add a Groq key. Otherwise falls back to simulated answers.', 'color:#444');
+    }
+
+    // Boot
+    window.onload = init;
+  </script>
+</body>
+</html>
