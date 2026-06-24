@@ -23,4 +23,4 @@ The site is fully static but uses a Netlify Function to securely call the Groq A
 
 ## Notes
 - Remove or replace the Groq key before making the repo public.
-- The guided chat helps gather complete project info without repeating questions.
+- The guided chat helps gather complete project info without repeating questions. Thank you.
